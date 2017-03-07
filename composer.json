@@ -1,0 +1,21 @@
+{
+    "name": "swilson1337/yii2-widget-sidenav",
+    "description": "An extension of Kartik's SideNav module for Yii2.",
+    "type": "yii2-extension",
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "~2.0",
+        "kartik-v/yii2-widget-sidenav": "*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shawn Wilson",
+            "email": "swilson1337@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {"swilson1337\\sidenav\\": "src/"}
+    }
+}
