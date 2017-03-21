@@ -12,6 +12,8 @@ class SideNav extends \kartik\sidenav\SideNav
 {
 	public $indItem = '';
 	
+	public $outsideLinkTemplate = '<a href="{url}" target="_blank">{icon}{label}</a>';
+	
 	public function init()
 	{
 		parent::init();
@@ -23,7 +25,7 @@ class SideNav extends \kartik\sidenav\SideNav
 	{
 		$this->validateItems($item);
 		
-		$template = ArrayHelper::getValue($item, 'template', $this->linkTemplate);
+		$template = ArrayHelper::getValue($item, 'template', (!empty($item['outsideUrl']) ? $this->outsideLinkTemplate : $this->linkTemplate));
 		
 		$url = Url::to(ArrayHelper::getValue($item, 'url', '#'));
 		
@@ -35,8 +37,6 @@ class SideNav extends \kartik\sidenav\SideNav
 			}
 			else
 			{
-				$template = (isset($item['template']) ? $item['template'] : '<a href="{url}">{icon}{label}</a>');
-				
 				if ($item['active'])
 				{
 					$template = str_replace('{icon}', Html::tag('span', $this->indMenuOpen, ['class' => 'opened sidenav-toggle']).Html::tag('span', $this->indMenuClose, ['class' => 'closed sidenav-toggle', 'style' => 'display: none;']).'{icon}', $template);
