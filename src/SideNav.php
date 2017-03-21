@@ -3,139 +3,94 @@
 namespace swilson1337\sidenav;
 
 use yii\helpers\ArrayHelper;
-use yii\helpers\Url;
 use yii\helpers\Html;
 use Yii;
-use swilson1337\sidenav\SideNavAsset;
+use yii\base\InvalidConfigException;
 
-class SideNav extends \kartik\sidenav\SideNav
+class SideNav extends \yii\bootstrap\Nav
 {
-	public $indItem = '';
-	
-	public $outsideLinkTemplate = '<a href="{url}" target="_blank">{icon}{label}</a>';
-	
 	public function init()
 	{
 		parent::init();
 		
-		SideNavAsset::register($this->view);
+		Html::addCssClass($this->options, 'nav-pills nav-stacked');
 	}
 	
-	protected function renderItem($item)
+	public function renderItem($item)
 	{
-		$this->validateItems($item);
-		
-		$template = ArrayHelper::getValue($item, 'template', (!empty($item['outsideUrl']) ? $this->outsideLinkTemplate : $this->linkTemplate));
-		
-		$url = Url::to(ArrayHelper::getValue($item, 'url', '#'));
-		
-		if (empty($item['top']))
+		if (is_string($item))
 		{
-			if (empty($item['items']))
+			return $item;
+		}
+		
+		if (!isset($item['label']))
+		{
+			throw new InvalidConfigException('The \'label\' option is required.');
+		}
+		
+		$encodeLabel = (isset($item['encode']) ? $item['encode'] : $this->encodeLabels);
+		
+		$label = ($encodeLabel ? Html::encode($item['label']) : $item['label']);
+		
+		$options = ArrayHelper::getValue($item, 'options', []);
+		
+		$items = ArrayHelper::getValue($item, 'items');
+		
+		$url = ArrayHelper::getValue($item, 'url', '#');
+		
+		$linkOptions = ArrayHelper::getValue($item, 'linkOptions', []);
+		
+		$icon = ArrayHelper::getValue($item, 'icon', '');
+		
+		if (!empty($icon))
+		{
+			$icon = '<span class="glyphicon glyphicon-'.$icon.'"></span>&nbsp;';
+		}
+		
+		if (!empty($item['outsideUrl']))
+		{
+			$linkOptions['target'] = '_blank';
+		}
+		
+		if (isset($item['active']))
+		{
+			$active = ArrayHelper::remove($item, 'active', false);
+		}
+		else
+		{
+			$active = $this->isItemActive($item);
+		}
+		
+		if (empty($items))
+		{
+			$items = '';
+		}
+		else
+		{
+			$linkOptions['data-toggle'] = 'dropdown';
+			
+			Html::addCssClass($options, ['widget' => 'dropdown']);
+			
+			Html::addCssClass($linkOptions, ['widget' => 'dropdown-toggle']);
+			
+			if (!empty($this->dropDownCaret))
 			{
-				$template = str_replace('{icon}', $this->indItem.'{icon}', $template);
+				$label .= ' '.$this->dropDownCaret;
 			}
-			else
+			
+			if (is_array($items))
 			{
-				if ($item['active'])
-				{
-					$template = str_replace('{icon}', Html::tag('span', $this->indMenuOpen, ['class' => 'opened sidenav-toggle']).Html::tag('span', $this->indMenuClose, ['class' => 'closed sidenav-toggle', 'style' => 'display: none;']).'{icon}', $template);
-				}
-				else
-				{
-					$template = str_replace('{icon}', Html::tag('span', $this->indMenuClose, ['class' => 'closed sidenav-toggle']).Html::tag('span', $this->indMenuOpen, ['class' => 'opened sidenav-toggle', 'style' => 'display: none;']).'{icon}', $template);
-				}
+				$items = $this->isChildActive($items, $active);
+				
+				$items = $this->renderDropdown($items, $item);
 			}
 		}
 		
-		$icon = (empty($item['icon']) ? '' : ('<span class="'.$this->iconPrefix.$item['icon'].'"></span> &nbsp;'));
-		
-		unset($item['icon'], $item['top']);
-		
-		return strtr($template, [
-			'{url}' => $url,
-			'{label}' => $item['label'],
-			'{icon}' => $icon,
-		]);
-	}
-	
-	protected function renderItems($items)
-	{
-		$n = count($items);
-		
-		$lines = [];
-		
-		foreach ($items as $i => $item)
+		if ($active)
 		{
-			$options = ArrayHelper::merge($this->itemOptions, ArrayHelper::getValue($item, 'options', []));
-			
-			$tag = ArrayHelper::remove($options, 'tag', 'li');
-			
-			$class = [];
-			
-			if ($item['active'])
-			{
-				$active = true;
-				
-				if (!empty($item['items']))
-				{
-					foreach ($item['items'] as $child)
-					{
-						if ($child['active'])
-						{
-							$active = false;
-							
-							break;
-						}
-					}
-				}
-				
-				if ($active)
-				{
-					$class[] = $this->activeCssClass;
-				}
-				else
-				{
-					$class[] = 'active-parent';
-				}
-			}
-			
-			if ($i === 0 && $this->firstItemCssClass !== null)
-			{
-				$class[] = $this->firstItemCssClass;
-			}
-			
-			if ($i === ($n - 1) && $this->lastItemCssClass !== null)
-			{
-				$class[] = $this->lastItemCssClass;
-			}
-			
-			if (!empty($class))
-			{
-				if (empty($options['class']))
-				{
-					$options['class'] = implode(' ', $class);
-				}
-				else
-				{
-					$options['class'] .= ' '.implode(' ', $class);
-				}
-			}
-			
-			$menu = $this->renderItem($item);
-			
-			if (!empty($item['items']))
-			{
-				$submenuTemplate = ArrayHelper::getValue($item, 'submenuTemplate', $this->submenuTemplate);
-				
-				$menu .= strtr($submenuTemplate, [
-					'{items}' => $this->renderItems($item['items']),
-				]);
-			}
-			
-			$lines[] = Html::tag($tag, $menu, $options);
+			Html::addCssClass($options, 'active');
 		}
 		
-		return implode("\n", $lines);
+		return Html::tag('li', Html::a($icon.$label, $url, $linkOptions).$items, $options);
 	}
 }
