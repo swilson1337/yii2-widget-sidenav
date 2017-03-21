@@ -1,7 +1,0 @@
-.kv-sidenav .active-parent > ul {
-    display: block;
-}
-
-.kv-sidenav .nav .active-parent > ul {
-    display: block;
-}
