@@ -6,17 +6,24 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use Yii;
 use yii\base\InvalidConfigException;
+use swilson1337\sidenav\SideNavAsset;
 
 class SideNav extends \yii\bootstrap\Nav
 {
+	public $dropdownClass = 'swilson1337\sidenav\Collapse';
+	
 	public function init()
 	{
 		parent::init();
 		
-		Html::addCssClass($this->options, 'nav-pills nav-stacked');
+		$this->options['id'] = 'navigation';
+
+		Html::removeCssClass($this->options, 'nav');
+		
+		Html::addCssClass($this->options, 'sidenav list-group');
 	}
 	
-	public function renderItem($item)
+	public function renderItem($item, $child = false)
 	{
 		if (is_string($item))
 		{
@@ -32,19 +39,24 @@ class SideNav extends \yii\bootstrap\Nav
 		
 		$label = ($encodeLabel ? Html::encode($item['label']) : $item['label']);
 		
-		$options = ArrayHelper::getValue($item, 'options', []);
-		
 		$items = ArrayHelper::getValue($item, 'items');
 		
 		$url = ArrayHelper::getValue($item, 'url', '#');
 		
 		$linkOptions = ArrayHelper::getValue($item, 'linkOptions', []);
 		
+		Html::addCssClass($linkOptions, ['list-item-type' => 'list-group-item']);
+		
 		$icon = ArrayHelper::getValue($item, 'icon', '');
 		
 		if (!empty($icon))
 		{
-			$icon = '<span class="glyphicon glyphicon-'.$icon.'"></span>&nbsp;';
+			$label = '<span class="glyphicon glyphicon-'.$icon.'"></span>&emsp;'.$label;
+		}
+		
+		if ($child)
+		{
+			$label = '&emsp;'.$label;
 		}
 		
 		if (!empty($item['outsideUrl']))
@@ -61,36 +73,86 @@ class SideNav extends \yii\bootstrap\Nav
 			$active = $this->isItemActive($item);
 		}
 		
-		if (empty($items))
+		if ($child || empty($items))
 		{
 			$items = '';
 		}
 		else
 		{
-			$linkOptions['data-toggle'] = 'dropdown';
-			
-			Html::addCssClass($options, ['widget' => 'dropdown']);
-			
-			Html::addCssClass($linkOptions, ['widget' => 'dropdown-toggle']);
+			$linkOptions['data-toggle'] = 'collapse';
 			
 			if (!empty($this->dropDownCaret))
 			{
 				$label .= ' '.$this->dropDownCaret;
 			}
 			
+			$url = '#wtf';
+			
 			if (is_array($items))
 			{
 				$items = $this->isChildActive($items, $active);
 				
-				$items = $this->renderDropdown($items, $item);
+				$collapseOptions = ArrayHelper::getValue($item, 'collapseOptions', []);
+				
+				$collapseOptions['id'] = 'wtf';
+				
+				$collapseOptions['parent'] = '#navigation';
+				
+				Html::addCssClass($collapseOptions, 'submenu panel-collapse collapse');
+				
+				if ($active)
+				{
+					Html::addCssClass($collapseOptions, 'in');
+				}
+				
+				$items = $this->renderChildren($items, $collapseOptions);
 			}
 		}
 		
 		if ($active)
 		{
-			Html::addCssClass($options, 'active');
+			Html::addCssClass($linkOptions, 'active');
+			
+			if ($child)
+			{
+				Html::addCssStyle($linkOptions, 'background: #44b5f6; border-color: #44b5f6; border-radius: 0; color: #fff;');
+			}
+		}
+		else
+		{
+			$label = '<span class="text-primary">'.$label.'</span>';
 		}
 		
-		return Html::tag('li', Html::a($icon.$label, $url, $linkOptions).$items, $options);
+		return Html::a($label, $url, $linkOptions).$items;
+	}
+	
+	public function renderItems()
+	{
+		$items = [];
+		
+		foreach ($this->items as $item)
+		{
+			if (!isset($item['visible']) || !$item['visible'])
+			{
+				$items[] = $this->renderItem($item);
+			}
+		}
+		
+		return Html::tag('div', implode("\n", $items), $this->options);
+	}
+	
+	public function renderChildren($children, $options = [])
+	{
+		$items = [];
+		
+		foreach ($children as $item)
+		{
+			if (!isset($item['visible']) || !$item['visible'])
+			{
+				$items[] = $this->renderItem($item, true);
+			}
+		}
+		
+		return Html::tag('div', implode("\n", $items), $options);
 	}
 }
