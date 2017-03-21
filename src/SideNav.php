@@ -10,13 +10,13 @@ use swilson1337\sidenav\SideNavAsset;
 
 class SideNav extends \yii\bootstrap\Nav
 {
-	public $dropdownClass = 'swilson1337\sidenav\Collapse';
+	private $_collapseID = 0;
 	
 	public function init()
 	{
 		parent::init();
 		
-		$this->options['id'] = 'navigation';
+		SideNavAsset::register($this->view);
 
 		Html::removeCssClass($this->options, 'nav');
 		
@@ -79,14 +79,14 @@ class SideNav extends \yii\bootstrap\Nav
 		}
 		else
 		{
-			$linkOptions['data-toggle'] = 'collapse';
+			$collapseID = $this->id.'-'.$this->_collapseID;
 			
-			if (!empty($this->dropDownCaret))
-			{
-				$label .= ' '.$this->dropDownCaret;
-			}
+			$this->_collapseID++;
 			
-			$url = '#wtf';
+			$label .= Html::tag('span', '', [
+				'class' => 'sidenav-icon pull-right glyphicon glyphicon-chevron-'.($active ? 'up' : 'down'),
+				'data-target' => $collapseID,
+			]);
 			
 			if (is_array($items))
 			{
@@ -94,9 +94,7 @@ class SideNav extends \yii\bootstrap\Nav
 				
 				$collapseOptions = ArrayHelper::getValue($item, 'collapseOptions', []);
 				
-				$collapseOptions['id'] = 'wtf';
-				
-				$collapseOptions['parent'] = '#navigation';
+				$collapseOptions['id'] = $collapseID;
 				
 				Html::addCssClass($collapseOptions, 'submenu panel-collapse collapse');
 				
