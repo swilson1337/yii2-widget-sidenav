@@ -81,17 +81,13 @@ class SideNav extends \yii\bootstrap\Nav
 		{
 			$items = '';
 		}
-		else
+		elseif (is_array($items))
 		{
 			$collapseID = $this->id.'-'.$this->_collapseID;
 			
 			$this->_collapseID++;
 			
-			$label .= Html::tag('span', '', [
-				'class' => 'sidenav-icon pull-right glyphicon glyphicon-chevron-'.($active ? 'up' : 'down'),
-				'data-target' => $collapseID,
-				'id' => $collapseID.'-toggle-button',
-			]);
+			$items = $this->isChildActive($items, $active);
 			
 			if (empty($url) || $url == '#')
 			{
@@ -102,23 +98,24 @@ class SideNav extends \yii\bootstrap\Nav
 				$linkOptions['data-toggle'] = $collapseID.'-toggle-button';
 			}
 			
-			if (is_array($items))
+			$label .= Html::tag('span', '', [
+				'class' => 'sidenav-icon pull-right glyphicon glyphicon-chevron-'.($active ? 'up' : 'down'),
+				'data-target' => $collapseID,
+				'id' => $collapseID.'-toggle-button',
+			]);
+
+			$collapseOptions = ArrayHelper::getValue($item, 'collapseOptions', []);
+
+			$collapseOptions['id'] = $collapseID;
+
+			Html::addCssClass($collapseOptions, 'submenu panel-collapse collapse');
+
+			if ($active)
 			{
-				$items = $this->isChildActive($items, $active);
-				
-				$collapseOptions = ArrayHelper::getValue($item, 'collapseOptions', []);
-				
-				$collapseOptions['id'] = $collapseID;
-				
-				Html::addCssClass($collapseOptions, 'submenu panel-collapse collapse');
-				
-				if ($active)
-				{
-					Html::addCssClass($collapseOptions, 'in');
-				}
-				
-				$items = $this->renderChildren($items, $collapseOptions);
+				Html::addCssClass($collapseOptions, 'in');
 			}
+
+			$items = $this->renderChildren($items, $collapseOptions);
 		}
 		
 		if ($active)
