@@ -144,7 +144,7 @@ class SideNav extends \yii\bootstrap\Nav
 		
 		foreach ($this->items as $item)
 		{
-			if (!isset($item['visible']) || !$item['visible'])
+			if (!isset($item['visible']) || $item['visible'])
 			{
 				$items[] = $this->renderItem($item);
 			}
@@ -159,7 +159,7 @@ class SideNav extends \yii\bootstrap\Nav
 		
 		foreach ($children as $item)
 		{
-			if (!isset($item['visible']) || !$item['visible'])
+			if (!isset($item['visible']) || $item['visible'])
 			{
 				$items[] = $this->renderItem($item, true);
 			}
