@@ -10,6 +10,8 @@ use swilson1337\sidenav\SideNavAsset;
 
 class SideNav extends \yii\bootstrap\Nav
 {
+	public $activateParents = true;
+	
 	private $_collapseID = 0;
 	
 	public function init()
@@ -49,9 +51,11 @@ class SideNav extends \yii\bootstrap\Nav
 		
 		$icon = ArrayHelper::getValue($item, 'icon', '');
 		
+		$active = false;
+		
 		if (!empty($icon))
 		{
-			$label = '<span class="glyphicon glyphicon-'.$icon.'"></span>&emsp;'.$label;
+			$label = '<span class="glyphicon glyphicon-'.$icon.'"></span>&nbsp; '.$label;
 		}
 		
 		if ($child)
@@ -64,9 +68,9 @@ class SideNav extends \yii\bootstrap\Nav
 			$linkOptions['target'] = '_blank';
 		}
 		
-		if (isset($item['active']))
+		if (!empty($item['active']))
 		{
-			$active = ArrayHelper::remove($item, 'active', false);
+			$active = true;
 		}
 		else
 		{
@@ -123,7 +127,7 @@ class SideNav extends \yii\bootstrap\Nav
 			
 			if ($child)
 			{
-				Html::addCssStyle($linkOptions, 'background: #44b5f6; border-color: #44b5f6; border-radius: 0; color: #fff;');
+				Html::addCssStyle($linkOptions, 'background-color: #5bc0de; border-color: #5bc0de; color: #fff; border-radius: 0;');
 			}
 		}
 		else
@@ -162,5 +166,23 @@ class SideNav extends \yii\bootstrap\Nav
 		}
 		
 		return Html::tag('div', implode("\n", $items), $options);
+	}
+	
+	protected function isChildActive($items, &$active)
+	{
+		foreach ($items as $i => $child)
+		{
+			if (!empty($child['active']) || $this->isItemActive($child))
+			{
+				Html::addCssClass($items[$i]['options'], 'active');
+				
+				if ($this->activateParents)
+				{
+					$active = true;
+				}
+			}
+		}
+		
+		return $items;
 	}
 }
