@@ -86,7 +86,17 @@ class SideNav extends \yii\bootstrap\Nav
 			$label .= Html::tag('span', '', [
 				'class' => 'sidenav-icon pull-right glyphicon glyphicon-chevron-'.($active ? 'up' : 'down'),
 				'data-target' => $collapseID,
+				'id' => $collapseID.'-toggle-button',
 			]);
+			
+			if (empty($url) || $url == '#')
+			{
+				Html::addCssClass($linkOptions, 'sidenav-toggle');
+				
+				$linkOptions['data-target'] = $collapseID;
+				
+				$linkOptions['data-toggle'] = $collapseID.'-toggle-button';
+			}
 			
 			if (is_array($items))
 			{
