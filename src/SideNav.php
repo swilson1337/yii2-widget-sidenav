@@ -77,7 +77,7 @@ class SideNav extends \yii\bootstrap\Nav
 			$active = $this->isItemActive($item);
 		}
 		
-		if ($child || empty($items))
+		if ($child || empty($items) || $this->getItemCount($items) < 1)
 		{
 			$items = '';
 		}
@@ -163,6 +163,21 @@ class SideNav extends \yii\bootstrap\Nav
 		}
 		
 		return Html::tag('div', implode("\n", $items), $options);
+	}
+	
+	public function getItemCount($items)
+	{
+		$i = 0;
+		
+		foreach ($items as $item)
+		{
+			if (!isset($item['visible']) || $item['visible'])
+			{
+				$i++;
+			}
+		}
+		
+		return $i;
 	}
 	
 	protected function isChildActive($items, &$active)
