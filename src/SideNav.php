@@ -81,7 +81,7 @@ class SideNav extends \yii\bootstrap\Nav
 		{
 			$items = '';
 		}
-		elseif (is_array($items))
+		else
 		{
 			$collapseID = $this->id.'-'.$this->_collapseID;
 			
