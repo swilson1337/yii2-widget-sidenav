@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use Yii;
 use yii\base\InvalidConfigException;
 use swilson1337\sidenav\SideNavAsset;
+use yii\bootstrap\BootstrapPluginAsset;
 
 class SideNav extends \yii\bootstrap\Nav
 {
@@ -17,6 +18,8 @@ class SideNav extends \yii\bootstrap\Nav
 	public function init()
 	{
 		parent::init();
+		
+		BootstrapPluginAsset::register($this->view);
 		
 		SideNavAsset::register($this->view);
 
@@ -47,6 +50,8 @@ class SideNav extends \yii\bootstrap\Nav
 		
 		$linkOptions = ArrayHelper::getValue($item, 'linkOptions', []);
 		
+		Html::addCssStyle($linkOptions, 'border-radius: 0;');
+		
 		Html::addCssClass($linkOptions, ['list-item-type' => 'list-group-item']);
 		
 		$icon = ArrayHelper::getValue($item, 'icon', '');
@@ -60,6 +65,8 @@ class SideNav extends \yii\bootstrap\Nav
 		
 		if ($child)
 		{
+			Html::addCssStyle($linkOptions, 'border-bottom: none;');
+			
 			$label = '&emsp;'.$label;
 		}
 		
@@ -125,7 +132,7 @@ class SideNav extends \yii\bootstrap\Nav
 			
 			if ($child)
 			{
-				Html::addCssStyle($linkOptions, 'background-color: #5bc0de; border-color: #5bc0de; color: #fff; border-radius: 0;');
+				Html::addCssStyle($linkOptions, 'background-color: #5bc0de; border-color: #5bc0de; color: #fff;');
 			}
 		}
 		else
