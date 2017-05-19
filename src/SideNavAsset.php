@@ -9,4 +9,8 @@ class SideNavAsset extends \yii\web\AssetBundle
 	public $js = [
 		'js/sidenav.js',
 	];
+	
+	public $css = [
+		'css/sidenav.css',
+	];
 }
