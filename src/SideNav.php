@@ -50,9 +50,7 @@ class SideNav extends \yii\bootstrap\Nav
 		
 		$linkOptions = ArrayHelper::getValue($item, 'linkOptions', []);
 		
-		Html::addCssStyle($linkOptions, 'border-radius: 0;');
-		
-		Html::addCssClass($linkOptions, ['list-item-type' => 'list-group-item']);
+		Html::addCssClass($linkOptions, ['list-item-type' => 'list-group-item', 'sidenav-item']);
 		
 		$icon = ArrayHelper::getValue($item, 'icon', '');
 		
@@ -65,7 +63,7 @@ class SideNav extends \yii\bootstrap\Nav
 		
 		if ($child)
 		{
-			Html::addCssStyle($linkOptions, 'border-bottom: none;');
+			Html::addCssClass($linkOptions, 'sidenav-child');
 			
 			$label = '&emsp;'.$label;
 		}
@@ -74,7 +72,6 @@ class SideNav extends \yii\bootstrap\Nav
 		{
 			$linkOptions['target'] = '_blank';
 		}
-		
 		if (!empty($item['active']))
 		{
 			$active = true;
@@ -129,15 +126,6 @@ class SideNav extends \yii\bootstrap\Nav
 		if ($active)
 		{
 			Html::addCssClass($linkOptions, 'active');
-			
-			if ($child)
-			{
-				Html::addCssStyle($linkOptions, 'background-color: #5bc0de; border-color: #5bc0de; color: #fff;');
-			}
-		}
-		else
-		{
-			$label = '<span class="text-primary">'.$label.'</span>';
 		}
 		
 		return Html::a($label, $url, $linkOptions).$items;
