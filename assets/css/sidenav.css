@@ -1,0 +1,27 @@
+a.list-group-item.sidenav-item {
+	border-radius: 0;
+	color: #337ab7;
+}
+
+a.list-group-item.sidenav-item:hover,
+a.list-group-item.sidenav-item:focus {
+	color: #286090;
+}
+
+a.list-group-item.sidenav-item.active,
+a.list-group-item.sidenav-item.active:hover,
+a.list-group-item.sidenav-item.active:focus {
+	color: #fff;
+}
+
+a.list-group-item.sidenav-item.sidenav-child {
+	border-bottom: none;
+}
+
+a.list-group-item.sidenav-item.sidenav-child.active,
+a.list-group-item.sidenav-item.sidenav-child.active:hover,
+a.list-group-item.sidenav-item.sidenav-child.active:focus {
+	background-color: #5bc0de;
+	border-color: #5bc0de;
+	color: #fff;
+}
