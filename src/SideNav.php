@@ -117,6 +117,8 @@ class SideNav extends \yii\bootstrap\Nav
 
 			if ($active)
 			{
+				Html::addCssClass($linkOptions, 'sidenav-parent');
+				
 				Html::addCssClass($collapseOptions, 'in');
 			}
 
