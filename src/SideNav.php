@@ -56,6 +56,8 @@ class SideNav extends \yii\bootstrap\Nav
 		
 		$active = false;
 		
+		$childActive = false;
+		
 		if (!empty($icon))
 		{
 			$label = '<span class="glyphicon glyphicon-'.$icon.'"></span>&nbsp; '.$label;
@@ -91,7 +93,7 @@ class SideNav extends \yii\bootstrap\Nav
 			
 			$this->_collapseID++;
 			
-			$items = $this->isChildActive($items, $active);
+			$items = $this->isChildActive($items, $active, $childActive);
 			
 			if (empty($url) || $url == '#')
 			{
@@ -125,7 +127,7 @@ class SideNav extends \yii\bootstrap\Nav
 			$items = $this->renderChildren($items, $collapseOptions);
 		}
 		
-		if ($active)
+		if ($active && (!$childActive || $this->activateParents))
 		{
 			Html::addCssClass($linkOptions, 'active');
 		}
@@ -178,7 +180,7 @@ class SideNav extends \yii\bootstrap\Nav
 		return $i;
 	}
 	
-	protected function isChildActive($items, &$active)
+	protected function isChildActive($items, &$active, &$childActive = false)
 	{
 		foreach ($items as $i => $child)
 		{
@@ -186,10 +188,9 @@ class SideNav extends \yii\bootstrap\Nav
 			{
 				Html::addCssClass($items[$i]['options'], 'active');
 				
-				if ($this->activateParents)
-				{
-					$active = true;
-				}
+				$childActive = true;
+				
+				$active = true;
 			}
 		}
 		
