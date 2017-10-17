@@ -127,7 +127,11 @@ class SideNav extends \yii\bootstrap\Nav
 			$items = $this->renderChildren($items, $collapseOptions);
 		}
 		
-		if ($active && (!$childActive || $this->activateParents))
+		if ($url == '#' && empty($items))
+		{
+			return '';
+		}
+		elseif ($active && (!$childActive || $this->activateParents))
 		{
 			Html::addCssClass($linkOptions, 'active');
 		}
