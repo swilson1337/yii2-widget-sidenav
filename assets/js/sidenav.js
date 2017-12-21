@@ -1,4 +1,4 @@
-$(document).on("ready", function()
+$(document).ready(function()
 {
 	$(".sidenav-icon").on("click", function(e)
 	{
